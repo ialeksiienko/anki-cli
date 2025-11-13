@@ -24,7 +24,7 @@ git clone https://github.com/ialeksiienko/anki-cli.git
 cd anki-cli
 ```
 
-## Build the CLI:
+Build the CLI:
 
 ```bash
 go build -o anki-cli main.go
@@ -35,6 +35,8 @@ go build -o anki-cli main.go
 Download a binary from [Releases](https://github.com/ialeksiienko/anki-cli/releases)
 
 ### 3 option:
+
+Go install:
 
 ```bash
 go install github.com/ialeksiienko/anki-cli@latest
