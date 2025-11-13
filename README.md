@@ -1,4 +1,4 @@
-# anki-go
+# anki-cli
 
 Simple CLI tool to add "word - translation" pairs to Anki decks using AnkiConnect.
 
@@ -15,17 +15,29 @@ Simple CLI tool to add "word - translation" pairs to Anki decks using AnkiConnec
 
 ## Installation
 
+### 1 option:
+
 Clone this repository:
 
 ```bash
-git clone https://github.com/yourusername/anki-go.git
-cd anki-go
+git clone https://github.com/ialeksiienko/anki-cli.git
+cd anki-cli
 ```
 
 ## Build the CLI:
 
 ```bash
-go build -o anki-go main.go
+go build -o anki-cli main.go
+```
+
+### 2 option:
+
+Download a binary from [Releases](https://github.com/ialeksiienko/anki-cli/releases)
+
+### 3 option:
+
+```bash
+go install github.com/ialeksiienko/anki-cli@latest
 ```
 
 ## Usage
@@ -33,13 +45,13 @@ go build -o anki-go main.go
 Add a single word:
 
 ```bash
-./anki-go "word - translation"
+./anki-cli "word - translation"
 ```
 
 Add multiple words (newline-separated):
 
 ```bash
-./anki-go "word - translation
+./anki-cli "word - translation
 word1 - translation1
 word2 - translation2"
 ```
