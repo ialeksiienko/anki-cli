@@ -26,7 +26,7 @@ cd anki-cli
 Build the CLI:
 
 ```bash
-go build -o anki-cli main.go
+go build -ldflags="-X 'main.Version=v1.1.0'" -o anki-cli
 ```
 
 ### 2 option:
