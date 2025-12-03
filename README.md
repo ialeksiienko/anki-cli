@@ -5,8 +5,7 @@ Simple CLI tool to add "word - translation" pairs to Anki decks using AnkiConnec
 ## Features
 
 - Add single or multiple words in the format `word - translation`
-- Automatically creates the deck if it doesn't exist
-- Supports custom deck names and the default "Basic" note type
+- Supports custom deck names and note types
 
 ## Requirements
 
@@ -47,13 +46,13 @@ go install github.com/ialeksiienko/anki-cli@latest
 Add a single word:
 
 ```bash
-./anki-cli "word - translation"
+./anki-cli "deck-name" "model-name" "word - translation"
 ```
 
 Add multiple words (newline-separated):
 
 ```bash
-./anki-cli "word - translation
+./anki-cli "deck-name" "model-name" "word - translation
 word1 - translation1
 word2 - translation2"
 ```
@@ -61,4 +60,4 @@ word2 - translation2"
 ## How it works
 
 The CLI sends a JSON request to AnkiConnect at http://localhost:8765.
-It uses the "Basic" note type with "Front"/"Back" fields by default.
+It uses the "Front"/"Back" fields by default.

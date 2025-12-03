@@ -6,11 +6,12 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"strings"
 	"time"
+
+	"github.com/fatih/color"
 )
 
 // AnkiConnectURL is the local endpoint of the AnkiConnect API used to communicate with Anki
@@ -42,17 +43,21 @@ func main() {
 		return
 	}
 
-	if len(os.Args) <= 1 {
-		log.Printf("Usage: %s \"word-translate\"\n", os.Args[0])
+	if len(os.Args) <= 3 {
+		color.Red(fmt.Sprintf("usage: %s \"deck-name\" \"model-name\" \"word-translate\"", os.Args[0]))
 		os.Exit(1)
 	}
 
-	text := os.Args[1]
-	lines := strings.Split(text, "\n")
+	deckname := os.Args[1]  // f. e. English
+	modelname := os.Args[2] // f.e. Basic
 
-	// create a context with a 20-second timeout for all requests
-	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
-	defer cancel()
+	if deckname == "" && modelname == "" {
+		printError("deck name and model name are required")
+		os.Exit(1)
+	}
+
+	text := os.Args[3]
+	lines := strings.Split(text, "\n")
 
 	for _, l := range lines {
 		words := strings.Split(l, "-")
@@ -63,24 +68,28 @@ func main() {
 		var note Note
 		note.Action = "addNote"
 		note.Version = 6
-		note.Params.Note.DeckName = "English"
-		note.Params.Note.ModelName = "Basic"
+		note.Params.Note.DeckName = deckname
+		note.Params.Note.ModelName = modelname
 		note.Params.Note.Fields.Front = englishWord
 		note.Params.Note.Fields.Back = translatedWord
 		note.Params.Note.Tags = []string{""}
 
 		noteBytes, _ := json.Marshal(note)
 
+		// create a context with a 20-second timeout for all requests
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+
 		// send the note to AnkiConnect
 		req, err := http.NewRequestWithContext(ctx, http.MethodPost, AnkiConnectURL, bytes.NewBuffer(noteBytes))
 		if err != nil {
-			log.Printf("unbale to create a req to anki conntect: %s", err.Error())
+			printError(fmt.Sprintf("unable to create a req to anki conntect: %s", err.Error()))
 			os.Exit(1)
 		}
 
 		res, err := http.DefaultClient.Do(req)
 		if err != nil {
-			log.Printf("unable to send note: %s\n", err.Error())
+			printError(fmt.Sprintf("unable to send note: %s", err.Error()))
 			os.Exit(1)
 		}
 		defer res.Body.Close()
@@ -92,15 +101,15 @@ func main() {
 		er, ok := resMap["error"]
 		if ok {
 			if er != nil {
-				b, err := json.MarshalIndent(resMap, "", "  ")
-				if err != nil {
-					fmt.Println("error while marshaling response map:", err)
-					os.Exit(1)
-				}
-				fmt.Println(string(b))
-			} else {
-				fmt.Printf("Added: %s - %s\n", englishWord, translatedWord)
+				printError(er.(string))
+				os.Exit(1)
 			}
+
+			color.Green("✓ added: %s", fmt.Sprintf("%s - %s\n", englishWord, translatedWord))
 		}
 	}
+}
+
+func printError(msg string) {
+	color.Red("✗ error: %s", msg)
 }
